@@ -51,31 +51,27 @@ def get_jsonparsed_data(url):
 # Function to get the income statement and extract the required fields
 
 
-def get_inc_stmnt(company: str, apiKey: str) -> dict:
-    """Return annualized ebit, tax expense and interest expense
+def get_inc_stmnt(company: str, myApiKey: str) -> dict:
+    """Return annualized ebit, tax expense income before tax and interest expense
        from the quarterly reports of a ticker.
 
     The API returns up to 20 recent quarters; we aggregate them into at most five years.
     """
-    url = (
-        f"https://www.alphavantage.co/query?"
-        f"function=INCOME_STATEMENT&symbol={company}&apikey={apiKey}"
-    )
+    url = f"https://financialmodelingprep.com/stable/income-statement?symbol={company}&period=quarter&limit=20&apikey={myApiKey}"
     resp = requests.get(url)
     data = resp.json()
 
     # The API returns the most recent quarter first.
-    quarterly_reports = data.get("quarterlyReports", [])
 
-    if not quarterly_reports:
+    if not data:
         raise ValueError(f"No quarterly reports found for {company}")
 
     # We’ll aggregate at most 5 years (20 quarters).
-    max_quarters = min(len(quarterly_reports), 20)
+    max_quarters = min(len(data), 20)
     yearly_data = []
 
     for i in range(0, max_quarters, 4):  # step by four quarters
-        quarter_block = quarterly_reports[i : i + 4]
+        quarter_block = data[i : i + 4]
         if len(quarter_block) < 4:
             break  # incomplete year at the end of the list
 
@@ -107,69 +103,76 @@ def get_inc_stmnt(company: str, apiKey: str) -> dict:
 # Function to get the balance sheet and extract the required fields
 
 
-def get_bal_sheet(company, apiKey):
-    url = f"https://www.alphavantage.co/query?function=BALANCE_SHEET&symbol={company}&apikey={apiKey}"
+def get_bal_sheet(company: str, myApiKey: str) -> dict:
+    url = f"https://financialmodelingprep.com/stable/income-statement?symbol={company}&period=quarter&limit=20&apikey={myApiKey}"
 
     data = get_jsonparsed_data(url)
-    balSheet = data.get("quarterlyReports", [])
     balSht = {}
     cashAndEquivalents = [
-        safe_float(balSheet[0]["cashAndShortTermInvestments"]),
-        safe_float(balSheet[4]["cashAndShortTermInvestments"]),
-        safe_float(balSheet[8]["cashAndShortTermInvestments"]),
-        safe_float(balSheet[12]["cashAndShortTermInvestments"]),
-        safe_float(balSheet[16]["cashAndShortTermInvestments"]),
+        safe_float(data[0]["cashAndShortTermInvestments"]),
+        safe_float(data[4]["cashAndShortTermInvestments"]),
+        safe_float(data[8]["cashAndShortTermInvestments"]),
+        safe_float(data[12]["cashAndShortTermInvestments"]),
+        safe_float(data[16]["cashAndShortTermInvestments"]),
     ]
     currentAssets = [
-        safe_float(balSheet[0]["totalCurrentAssets"]),
-        safe_float(balSheet[4]["totalCurrentAssets"]),
-        safe_float(balSheet[8]["totalCurrentAssets"]),
-        safe_float(balSheet[12]["totalCurrentAssets"]),
-        safe_float(balSheet[16]["totalCurrentAssets"]),
+        safe_float(data[0]["totalCurrentAssets"]),
+        safe_float(data[4]["totalCurrentAssets"]),
+        safe_float(data[8]["totalCurrentAssets"]),
+        safe_float(data[12]["totalCurrentAssets"]),
+        safe_float(data[16]["totalCurrentAssets"]),
     ]
 
     stockholdersEquity = [
-        safe_float(balSheet[0]["totalShareholderEquity"]),
-        safe_float(balSheet[4]["totalShareholderEquity"]),
-        safe_float(balSheet[8]["totalShareholderEquity"]),
-        safe_float(balSheet[12]["totalShareholderEquity"]),
-        safe_float(balSheet[16]["totalShareholderEquity"]),
+        safe_float(data[0]["totalShareholdersEquity"]),
+        safe_float(data[4]["totalShareholdersEquity"]),
+        safe_float(data[8]["totalShareholdersEquity"]),
+        safe_float(data[12]["totalShareholdesrEquity"]),
+        safe_float(data[16]["totalShareholdersEquity"]),
     ]
     currentLiabilities = [
-        safe_float(balSheet[0]["totalCurrentLiabilities"]),
-        safe_float(balSheet[4]["totalCurrentLiabilities"]),
-        safe_float(balSheet[8]["totalCurrentLiabilities"]),
-        safe_float(balSheet[12]["totalCurrentLiabilities"]),
-        safe_float(balSheet[16]["totalCurrentLiabilities"]),
-    ]
-    currentLongDebt = [
-        safe_float(balSheet[0]["currentLongTermDebt"]),
-        safe_float(balSheet[4]["currentLongTermDebt"]),
-        safe_float(balSheet[8]["currentLongTermDebt"]),
-        safe_float(balSheet[12]["currentLongTermDebt"]),
-        safe_float(balSheet[16]["currentLongTermDebt"]),
+        safe_float(data[0]["totalCurrentLiabilities"]),
+        safe_float(data[4]["totalCurrentLiabilities"]),
+        safe_float(data[8]["totalCurrentLiabilities"]),
+        safe_float(data[12]["totalCurrentLiabilities"]),
+        safe_float(data[16]["totalCurrentLiabilities"]),
     ]
     shortTermDebt = [
-        safe_float(balSheet[0]["shortTermDebt"]),
-        safe_float(balSheet[4]["shortTermDebt"]),
-        safe_float(balSheet[8]["shortTermDebt"]),
-        safe_float(balSheet[12]["shortTermDebt"]),
-        safe_float(balSheet[16]["shortTermDebt"]),
+        safe_float(data[0]["shortTermDebt"]),
+        safe_float(data[4]["shortTermDebt"]),
+        safe_float(data[8]["shortTermDebt"]),
+        safe_float(data[12]["shortTermDebt"]),
+        safe_float(data[16]["shortTermDebt"]),
+    ]
+    currentLeaseObligations = [
+        safe_float(data[0]["capitalLeaseObligationsCurrent"]),
+        safe_float(data[4]["capitalLeaseObligationsCurrent"]),
+        safe_float(data[8]["capitalLeaseObligationsCurrent"]),
+        safe_float(data[12]["capitalLeaseObligationsCurrent"]),
+        safe_float(data[16]["capitalLeaseObligationsCurrent"]),
     ]
     longTermDebt = [
-        safe_float(balSheet[0]["longTermDebt"]),
-        safe_float(balSheet[4]["longTermDebt"]),
-        safe_float(balSheet[8]["longTermDebt"]),
-        safe_float(balSheet[12]["longTermDebt"]),
-        safe_float(balSheet[16]["longTermDebt"]),
+        safe_float(data[0]["longTermDebt"]),
+        safe_float(data[4]["longTermDebt"]),
+        safe_float(data[8]["longTermDebt"]),
+        safe_float(data[12]["longTermDebt"]),
+        safe_float(data[16]["longTermDebt"]),
+    ]
+    longTermLeaseObligations = [
+        safe_float(data[0]["capitalLeaseObligationsNonCurrent"]),
+        safe_float(data[4]["capitalLeaseObligationsNonCurrent"]),
+        safe_float(data[8]["capitalLeaseObligationsNonCurrent"]),
+        safe_float(data[12]["capitalLeaseObligationsNonCurrent"]),
+        safe_float(data[16]["capitalLeaseObligationsNonCurrent"]),
     ]
     balSht["cash_and_equivalents"] = cashAndEquivalents
     balSht["total_current_assets"] = currentAssets
     # balSht["totalAssets"] = totalAssets
     # balSht["accountsPayable"] = accountsPayable
-    balSht["current_long_debt"] = currentLongDebt
     balSht["short_term_debt"] = shortTermDebt
+    balSht["capitalLeaseObligationsCurrent"] = currentLeaseObligations
     balSht["long_term_debt"] = longTermDebt
+    balSht["capitalLeaseObligationsNonCurrent"] = longTermLeaseObligations
     balSht["total_current_liabilities"] = currentLiabilities
     # balSht["totalLiabilities"] = liabilities
     balSht["total_stockholders_equity"] = stockholdersEquity

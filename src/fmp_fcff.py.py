@@ -7,7 +7,7 @@ Worth hides in the mist.
 from dataclasses import dataclass
 from datetime import date
 import sqlite3
-import hg_dcflib
+import hg_fmplib
 import logging
 
 logger = logging.getLogger(__name__)
@@ -32,18 +32,18 @@ logger.addHandler(file_handler)
 
 # ## Define the constants used in the module
 
-EQ_PREM = hg_dcflib.get_erp()
+EQ_PREM = hg_fmplib.get_erp()
 MARGINAL_TAX_RATE = 0.26
 COMPANY = input("Input company ticker: ").upper()
 GROWTH_PERIOD = int(input("Input growth period: "))
-INDUSTRY = hg_dcflib.get_industry(COMPANY)
+INDUSTRY = hg_fmplib.get_industry(COMPANY)
 with open("/Users/jhess/Development/Alpha2/data/ApiKey.txt") as f:
     MY_API_KEY = f.readline()
 with open("/Users/jhess/Development/Alpha2/data/fred_api.txt") as f:
     FRED_KEY = f.readline()
-RD_YEARS = hg_dcflib.get_rAndD_years(INDUSTRY) + 1
-UNLEVERED_BETA = hg_dcflib.get_beta(INDUSTRY)
-RISK_FREE = hg_dcflib.get_risk_free(FRED_KEY)
+RD_YEARS = hg_fmplib.get_rAndD_years(INDUSTRY) + 1
+UNLEVERED_BETA = hg_fmplib.get_beta(INDUSTRY)
+RISK_FREE = hg_fmplib.get_risk_free(FRED_KEY)
 
 
 # ## Class for Valuation
@@ -144,7 +144,7 @@ def insert_valuation(conn, val):
 
 
 def income_statement(COMPANY, MY_API_KEY):
-    inc_stmnt = hg_dcflib.get_inc_stmnt(COMPANY, MY_API_KEY)
+    inc_stmnt = hg_fmplib.get_inc_stmnt(COMPANY, MY_API_KEY)
     # with open(f"data/{COMPANY}inc_stmnt.csv", "w", newline="") as f:
     #     w = csv.DictWriter(f, inc_stmnt.keys())
     #     w.writeheader()
@@ -153,7 +153,7 @@ def income_statement(COMPANY, MY_API_KEY):
 
 
 def balance_sheet(COMPANY, MY_API_KEY):
-    bal_sht = hg_dcflib.get_bal_sheet(COMPANY, MY_API_KEY)
+    bal_sht = hg_fmplib.get_bal_sheet(COMPANY, MY_API_KEY)
     # with open(f"data/{COMPANY}bal_Sht.csv", "w", newline="") as f:
     #     w = csv.DictWriter(f, bal_Sht.keys())
     #     w.writeheader()
@@ -162,7 +162,7 @@ def balance_sheet(COMPANY, MY_API_KEY):
 
 
 def cash_flow_statement(COMPANY, MY_API_KEY):
-    cash_flw = hg_dcflib.get_cash_flow(COMPANY, MY_API_KEY)
+    cash_flw = hg_fmplib.get_cash_flow(COMPANY, MY_API_KEY)
     # with open(f"data/{COMPANY}cashFlw.csv", "w") as f:
     #     w = csv.DictWriter(f, cash_flw.keys())
     #     w.writeheader()
@@ -171,7 +171,7 @@ def cash_flow_statement(COMPANY, MY_API_KEY):
 
 
 def enterprise_quote(COMPANY, MY_API_KEY):
-    ent_quote = hg_dcflib.get_quote(COMPANY, MY_API_KEY)
+    ent_quote = hg_fmplib.get_quote(COMPANY, MY_API_KEY)
     return ent_quote
 
 
@@ -212,7 +212,7 @@ def calc_chng_wc(bal_sht):
 
 
 def capitalizerAndD(COMPANY, RD_YEARS, MY_API_KEY):
-    rdTable = hg_dcflib.get_rAndD(COMPANY, RD_YEARS, MY_API_KEY)
+    rdTable = hg_fmplib.get_rAndD(COMPANY, RD_YEARS, MY_API_KEY)
     rd_dict, years_to_process = rdTable
     logger.info(f"rdTable = {rdTable}")
     logger.info(f"rd_dict = {rd_dict}")
@@ -342,7 +342,7 @@ def calc_discount_rate(inc_stmnt, bv_debt, adjusted_bv_equity, beta):
     logger.info(f"operating Income {inc_stmnt['ebit'][0]}")
     logger.info(f"interest expense {inc_stmnt['interest_expense'][0]}")
     logger.info(f"Interest Coverage = {int_cover}")
-    def_spread = hg_dcflib.get_default_spread(int_cover)
+    def_spread = hg_fmplib.get_default_spread(int_cover)
     logger.info(f"Default Spread = {def_spread}")
 
     # 2. Calcultate after tax cost of debt
