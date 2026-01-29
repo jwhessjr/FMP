@@ -1,0 +1,26 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*$py.class
+*.so
+*.egg-info
+
+# uv
+.python-version
+
+# IDE
+.vscode/
+.idea/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Proprietary files
+ApiKey.txt
+fred_api.txt
+russell_2000.xlsx

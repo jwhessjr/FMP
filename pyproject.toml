@@ -1,0 +1,7 @@
+[project]
+name = "fmp"
+version = "0.1.0"
+description = "Free Cash Flow to the Firm DCF using Financial Modeling Prep Data"
+readme = "README.md"
+requires-python = ">=3.13.3"
+dependencies = []
