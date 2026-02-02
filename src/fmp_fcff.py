@@ -37,9 +37,9 @@ MARGINAL_TAX_RATE = 0.26
 COMPANY = input("Input company ticker: ").upper()
 GROWTH_PERIOD = int(input("Input growth period: "))
 INDUSTRY = hg_fmplib.get_industry(COMPANY)
-with open("/Users/jhess/Development/Alpha2/data/ApiKey.txt") as f:
+with open("/Users/jhess/Development/FMP/data/ApiKey.txt") as f:
     MY_API_KEY = f.readline()
-with open("/Users/jhess/Development/Alpha2/data/fred_api.txt") as f:
+with open("/Users/jhess/Development/FMP/data/fred_api.txt") as f:
     FRED_KEY = f.readline()
 RD_YEARS = hg_fmplib.get_rAndD_years(INDUSTRY) + 1
 UNLEVERED_BETA = hg_fmplib.get_beta(INDUSTRY)

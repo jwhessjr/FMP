@@ -63,8 +63,8 @@ def get_inc_stmnt(company: str, myApiKey: str) -> dict:
 
     # The API returns the most recent quarter first.
 
-    if not data:
-        raise ValueError(f"No quarterly reports found for {company}")
+    if not data or not isinstance(data, list):
+        raise ValueError(f"No quarterly reports found for {company}. Response: {data}")
 
     # We’ll aggregate at most 5 years (20 quarters).
     max_quarters = min(len(data), 20)
@@ -104,9 +104,13 @@ def get_inc_stmnt(company: str, myApiKey: str) -> dict:
 
 
 def get_bal_sheet(company: str, myApiKey: str) -> dict:
-    url = f"https://financialmodelingprep.com/stable/income-statement?symbol={company}&period=quarter&limit=20&apikey={myApiKey}"
+    url = f"https://financialmodelingprep.com/stable/balance-sheet-statement?symbol={company}&period=quarter&limit=20&apikey={myApiKey}"
 
     data = get_jsonparsed_data(url)
+
+    if not data or not isinstance(data, list):
+        raise ValueError(f"No balance sheet data found for {company}. Response: {data}")
+
     balSht = {}
     cashAndEquivalents = [
         safe_float(data[0]["cashAndShortTermInvestments"]),
@@ -124,11 +128,11 @@ def get_bal_sheet(company: str, myApiKey: str) -> dict:
     ]
 
     stockholdersEquity = [
-        safe_float(data[0]["totalShareholdersEquity"]),
-        safe_float(data[4]["totalShareholdersEquity"]),
-        safe_float(data[8]["totalShareholdersEquity"]),
-        safe_float(data[12]["totalShareholdesrEquity"]),
-        safe_float(data[16]["totalShareholdersEquity"]),
+        safe_float(data[0]["totalStockholdersEquity"]),
+        safe_float(data[4]["totalStockholdersEquity"]),
+        safe_float(data[8]["totalStockholdersEquity"]),
+        safe_float(data[12]["totalStockholdersEquity"]),
+        safe_float(data[16]["totalStockholdersEquity"]),
     ]
     currentLiabilities = [
         safe_float(data[0]["totalCurrentLiabilities"]),
