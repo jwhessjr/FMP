@@ -380,7 +380,7 @@ def get_risk_free(FRED_KEY):
 
 def get_industry(company):
     indName = pd.read_excel(
-        "/Users/jhess/Development/Alpha2/data/indname.xlsx",
+        "/Users/jhess/Development/FMP/data/indname.xlsx",
         sheet_name="Global by Industry",
     )
 
@@ -402,7 +402,7 @@ def get_industry(company):
 
 def get_beta(industry):
     beta = pd.read_excel(
-        "/Users/jhess/Development/Alpha2/data/betas.xlsx",
+        "/Users/jhess/Development/FMP/data/betas.xlsx",
         sheet_name="Industry Averages",
         skiprows=9,
     )
@@ -422,7 +422,7 @@ def get_beta(industry):
 
 def get_default_spread(intCover):
     defaultSpread = pd.read_excel(
-        "/Users/jhess/Development/Alpha2/data/defaultSpread.xlsx"
+        "/Users/jhess/Development/FMP/data/defaultSpread.xlsx"
     )
 
     # for col in defaultSpread.columns:
@@ -443,7 +443,7 @@ def get_default_spread(intCover):
 
 def get_rAndD_years(industry):
     amortYears = pd.read_excel(
-        "/Users/jhess/Development/Alpha2/data/RD_Amortization.xlsx",
+        "/Users/jhess/Development/FMP/data/RD_Amortization.xlsx",
         sheet_name="Amort Years",
     )
 
