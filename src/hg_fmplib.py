@@ -39,7 +39,7 @@ def safe_float(val):
         return 0.0
 
 
-# Read statements from Alpha Vantage
+# Read statements from Financial Modeling Prep
 
 
 def get_jsonparsed_data(url):
@@ -195,17 +195,14 @@ def get_cash_flow(company: str, apiKey: str) -> dict:
     company : str
         Ticker symbol.
     apiKey : str
-        AlphaVantage API key.
+        Financial Modeling Prep API key.
 
     Returns
     -------
     dict
         Keys: 'depreciation', 'capex' (each a list of up to 5 yearly values).
     """
-    url = (
-        f"https://www.alphavantage.co/query?"
-        f"function=CASH_FLOW&symbol={company}&apikey={apiKey}"
-    )
+    url = f"https://financialmodelingprep.com/stable/cash-flow-statement?symbol={company}&period=quarter&limit=20&apikey={apiKey}"
     resp = requests.get(url)
     data = resp.json()
 
@@ -276,12 +273,12 @@ def get_erp():
 
 def get_rAndD(company, rd_years, apiKey):
     """
-    Fetches R&D expenses for a specified number of years from Alpha Vantage.
+    Fetches R&D expenses for a specified number of years from Financial Modeling Prep.
 
     Args:
         company (str): The company symbol.
         rd_years (int): The number of years to fetch R&D data for.
-        apiKey (str): The Alpha Vantage API key.
+        apiKey (str): The Financial Modeling Prep API key.
 
     Returns:
         dict: A dictionary containing a list of yearly R&D expenses.
@@ -294,7 +291,7 @@ def get_rAndD(company, rd_years, apiKey):
         response.raise_for_status()  # Raise an exception for bad status codes
         data = response.json()
     except requests.exceptions.RequestException as e:
-        logger.debug(f"Error fetching data from Alpha Vantage: {e}")
+        logger.debug(f"Error fetching data from Financial Modeling Prep: {e}")
         return {"research_and_development": []}
 
     rdExpense = data
