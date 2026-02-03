@@ -286,7 +286,7 @@ def get_rAndD(company, rd_years, apiKey):
     Returns:
         dict: A dictionary containing a list of yearly R&D expenses.
     """
-    url = f"https://www.alphavantage.co/query?function=INCOME_STATEMENT&symbol={company}&apikey={apiKey}"
+    url = f"https://financialmodelingprep.com/stable/income-statement?symbol={company}&period=quarter&limit=20&apikey={apiKey}"
 
     rd_table = {}
     try:
@@ -297,7 +297,7 @@ def get_rAndD(company, rd_years, apiKey):
         logger.debug(f"Error fetching data from Alpha Vantage: {e}")
         return {"research_and_development": []}
 
-    rdExpense = data.get("quarterlyReports", [])
+    rdExpense = data
 
     if not rdExpense:
         logger.debug("No quarterly reports found.")
@@ -322,7 +322,7 @@ def get_rAndD(company, rd_years, apiKey):
         for quarter in quarters:
             try:
                 # Use .get() with a default value to prevent KeyError
-                rd_val = safe_float(quarter.get("researchAndDevelopment", "0"))
+                rd_val = safe_float(quarter.get("researchAndDevelopmentExpenses", "0"))
                 yearRDExpense += rd_val
             except ValueError:
                 # If safe_float fails, just add 0 and continue.
@@ -340,17 +340,17 @@ def get_rAndD(company, rd_years, apiKey):
 
 def get_quote(company, apiKey):
     # ADD exchange to this extract and add it to the database
-    url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={company}&apikey={apiKey}"
-    data = get_jsonparsed_data(url)
-    data = data.get("Global Quote", [])
-    # print(data)
-    price = safe_float(data["05. price"])
-    url = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={company}&apikey={apiKey}"
+    url = f"https://financialmodelingprep.com/stable/profile?symbol={company}&apikey={apiKey}"
     data = get_jsonparsed_data(url)
     # print(data)
-    sharesOutstanding = safe_float(data["SharesOutstanding"])
-    marketCap = safe_float(data["MarketCapitalization"])
-    company_name = data["Name"]
+    price = safe_float(data[0]["price"])
+    marketCap = safe_float(data[0]["marketCap"])
+    company_name = data[0]["companyName"]
+    url = f"https://financialmodelingprep.com/stable/shares-float?symbol={company}&apikey={apiKey}"
+    data = get_jsonparsed_data(url)
+    # print(data)
+    sharesOutstanding = safe_float(data[0]["outstandingShares"])
+
     entQuote = price, sharesOutstanding, marketCap, company_name
     return entQuote
 
