@@ -206,26 +206,23 @@ def get_cash_flow(company: str, apiKey: str) -> dict:
     resp = requests.get(url)
     data = resp.json()
 
-    quarterly_reports = data.get("quarterlyReports", [])
-    if not quarterly_reports:
+    if not data:
         raise ValueError(f"No quarterly cash‑flow reports found for {company}")
 
     # We’ll aggregate at most 5 years (20 quarters).
-    max_quarters = min(len(quarterly_reports), 20)
+    max_quarters = min(len(data), 20)
 
     depreciation = []
     capex = []
 
     # Step through the list in blocks of four quarters.
     for i in range(0, max_quarters, 4):
-        block = quarterly_reports[i : i + 4]
+        block = data[i : i + 4]
         if len(block) < 4:
             break  # incomplete year at the end
 
-        yearly_capex = sum(safe_float(q["capitalExpenditures"]) for q in block)
-        yearly_depr = sum(
-            safe_float(q["depreciationDepletionAndAmortization"]) for q in block
-        )
+        yearly_capex = sum(safe_float(q["capitalExpenditure"]) for q in block)
+        yearly_depr = sum(safe_float(q["depreciationAndAmortization"]) for q in block)
 
         capex.append(yearly_capex)
         depreciation.append(yearly_depr)

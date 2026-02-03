@@ -7,7 +7,7 @@ wheels/
 *$py.class
 *.so
 *.egg-info
-value.log
+*.log
 
 
 # uv
@@ -26,3 +26,4 @@ ENV/
 ApiKey.txt
 fred_api.txt
 russell_2000.xlsx
+FMP_DCF_Calc.py
